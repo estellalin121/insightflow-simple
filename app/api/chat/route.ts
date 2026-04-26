@@ -1,20 +1,32 @@
-export async function POST(req: Request) {
-  try {
-    const { message } = await req.json();
+import { NextResponse } from "next/server";
 
-    // 临时返回（下一步我们再接真正的AI）
-    return new Response(
-      JSON.stringify({
-        reply: `你刚刚说的是：「${message}」，这个功能马上会接入AI能力。`,
-      }),
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  } catch (error) {
-    return new Response(
-      JSON.stringify({ error: "Something went wrong" }),
-      { status: 500 }
-    );
-  }
+export async function POST(req: Request) {
+  const { message } = await req.json();
+
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "你是一个擅长用户洞察的AI助手。",
+        },
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+    }),
+  });
+
+  const data = await res.json();
+
+  return NextResponse.json({
+    reply: data.choices?.[0]?.message?.content || "出错了",
+  });
 }
