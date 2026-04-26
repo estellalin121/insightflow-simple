@@ -123,17 +123,28 @@ export async function POST(req: Request) {
       }),
     });
 
-    const data = await res.json();
+    let reply = "系统有点累了，请稍等片刻后再次发送消息~";
 
-    return NextResponse.json({
-      reply:
+    try {
+      const text = await res.text();
+      console.log("DeepSeek raw response:", text);
+
+      const data = JSON.parse(text);
+
+      reply =
         data.choices?.[0]?.message?.content?.trim() ||
         data.error?.message ||
-        "系统有点累了，我们换个角度聊聊？",
-    });
-  } catch {
+        reply;
+    } catch (error) {
+      console.error("DeepSeek parse error:", error);
+    }
+
+    return NextResponse.json({ reply });
+  } catch (error) {
+    console.error("Route error:", error);
+
     return NextResponse.json({
-      reply: "服务器暂时出错了，请稍后再试。",
+      reply: "系统有点累了，请稍等片刻后再次发送消息~",
     });
   }
 }
