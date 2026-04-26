@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 
+type ChatMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
 export async function POST(req: Request) {
   try {
-    const { message } = await req.json();
+    const { messages } = await req.json();
 
     const res = await fetch("https://api.deepseek.com/chat/completions", {
       method: "POST",
@@ -41,10 +46,7 @@ export async function POST(req: Request) {
 - 中文自然表达
 `.trim(),
           },
-          {
-            role: "user",
-            content: message,
-          },
+          ...(messages as ChatMessage[]),
         ],
       }),
     });
