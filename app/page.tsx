@@ -7,18 +7,10 @@ type ChatMessage = {
   content: string;
 };
 
-declare global {
-  interface Window {
-    webkitSpeechRecognition?: any;
-    SpeechRecognition?: any;
-  }
-}
-
 export default function Page() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
-  const [listening, setListening] = useState(false);
 
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
@@ -97,41 +89,6 @@ export default function Page() {
     }
   };
 
-  const startVoiceInput = () => {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      alert("当前浏览器暂不支持语音输入。建议使用 Chrome 或 Edge 浏览器。");
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = "zh-CN";
-    recognition.interimResults = false;
-    recognition.continuous = false;
-
-    recognition.onstart = () => {
-      setListening(true);
-    };
-
-    recognition.onresult = (event: any) => {
-      const text = event.results?.[0]?.[0]?.transcript || "";
-      setInput((prev) => (prev ? `${prev}${text}` : text));
-    };
-
-    recognition.onerror = () => {
-      setListening(false);
-      alert("语音识别失败了，可以再试一次。");
-    };
-
-    recognition.onend = () => {
-      setListening(false);
-    };
-
-    recognition.start();
-  };
-
   return (
     <main style={styles.page}>
       <section style={styles.shell}>
@@ -176,7 +133,7 @@ export default function Page() {
                       }}
                     >
                       <div style={styles.messageLabel}>
-                        {isUser ? "你" : isInsight ? "Insight 小结" : "InsightFlow"}
+                        {isUser ? "我" : isInsight ? "Insight 小结" : "InsightFlow"}
                       </div>
 
                       {isInsight ? (
@@ -222,17 +179,6 @@ export default function Page() {
           />
 
           <div style={styles.actions}>
-            <button
-              onClick={startVoiceInput}
-              disabled={loading || listening}
-              style={{
-                ...styles.iconButton,
-                opacity: loading ? 0.6 : 1,
-              }}
-            >
-              {listening ? "🎙️ 听中" : "🎙️"}
-            </button>
-
             <button
               onClick={generateInsight}
               disabled={loading || messages.length === 0}
@@ -417,16 +363,6 @@ const styles: Record<string, React.CSSProperties> = {
   actions: {
     display: "flex",
     gap: 10,
-  },
-  iconButton: {
-    border: "1px solid rgba(120,92,72,0.18)",
-    borderRadius: 16,
-    padding: "13px 14px",
-    background: "#fff6ee",
-    color: "#5b4637",
-    fontSize: 15,
-    cursor: "pointer",
-    whiteSpace: "nowrap",
   },
   primaryButton: {
     border: "none",
