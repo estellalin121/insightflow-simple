@@ -7,20 +7,30 @@ type ChatMessage = {
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const { messages, mode } = await req.json();
 
-    const res = await fetch("https://api.deepseek.com/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [
-          {
-            role: "system",
-            content: `
+    const systemPrompt =
+      mode === "insight"
+        ? `
+你是一个“人性洞察总结者”。
+
+你的任务是：
+基于用户和AI的完整对话，总结出用户的情绪状态、心理需求和潜在自我认知。
+
+要求：
+- 不重复原对话
+- 提炼“用户在意什么”
+- 点出“用户可能正在经历的状态”
+- 有温柔、克制、被理解的感觉
+- 不要诊断用户
+- 不要说教
+
+输出要求：
+- 100~200字
+- 一段话
+- 中文自然表达
+`.trim()
+        : `
 你是一个“文娱洞察型对话者”。
 
 你的任务不是简单回答问题，而是：
@@ -44,7 +54,20 @@ export async function POST(req: Request) {
 输出要求：
 - 控制在2-4句话
 - 中文自然表达
-`.trim(),
+`.trim();
+
+    const res = await fetch("https://api.deepseek.com/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt,
           },
           ...(messages as ChatMessage[]),
         ],
