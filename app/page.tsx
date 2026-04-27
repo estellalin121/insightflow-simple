@@ -39,7 +39,8 @@ export default function Page() {
         ...newMessages,
         {
           role: "assistant",
-          content: data.reply || "系统有点累了，我们换个角度聊聊？",
+          content:
+            data.reply || "系统有点累了，请稍等片刻后再次发送消息~",
         },
       ]);
     } catch {
@@ -47,7 +48,7 @@ export default function Page() {
         ...newMessages,
         {
           role: "assistant",
-          content: "服务器暂时出错了，请稍后再试。",
+          content: "系统有点累了，请稍等片刻后再次发送消息~",
         },
       ]);
     } finally {
@@ -73,7 +74,9 @@ export default function Page() {
         ...messages,
         {
           role: "assistant",
-          content: `INSIGHT_REPORT\n${data.reply || "暂时还没有生成有效总结。"}`,
+          content: `INSIGHT_REPORT\n${
+            data.reply || "暂时还没有生成有效总结。"
+          }`,
         },
       ]);
     } catch {
@@ -93,13 +96,11 @@ export default function Page() {
     <main style={styles.page}>
       <section style={styles.shell}>
         <header style={styles.header}>
-          <div>
-            <div style={styles.badge}>Content × Self Insight</div>
-            <h1 style={styles.title}>InsightFlow</h1>
-            <p style={styles.subtitle}>
-              通过你喜欢的角色、作品和剧情，慢慢看见情绪背后的自己。
-            </p>
-          </div>
+          <div style={styles.badge}>Content × Self Insight</div>
+          <h1 style={styles.title}>InsightFlow</h1>
+          <p style={styles.subtitle}>
+            通过你喜欢的角色、作品和剧情，慢慢看见情绪背后的自己。
+          </p>
         </header>
 
         <section style={styles.chatPanel}>
@@ -138,7 +139,9 @@ export default function Page() {
 
                       {isInsight ? (
                         <div>
-                          <div style={styles.insightTitle}>🧠 你的 Insight 小结</div>
+                          <div style={styles.insightTitle}>
+                            🧠 你的 Insight 小结
+                          </div>
                           <div style={styles.messageText}>
                             {message.content.replace("INSIGHT_REPORT\n", "")}
                           </div>
@@ -187,7 +190,7 @@ export default function Page() {
                 opacity: loading || messages.length === 0 ? 0.45 : 1,
               }}
             >
-              🧠 总结一下
+              🧠 总结
             </button>
 
             <button
@@ -198,7 +201,7 @@ export default function Page() {
                 opacity: loading ? 0.6 : 1,
               }}
             >
-              {loading ? "发送中..." : "发送"}
+              {loading ? "发送中" : "发送"}
             </button>
           </div>
         </footer>
@@ -209,178 +212,219 @@ export default function Page() {
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
-    minHeight: "100vh",
+    minHeight: "100dvh",
     background:
       "linear-gradient(135deg, #f7f4ef 0%, #f6efe9 42%, #eef3f5 100%)",
-    padding: "32px 16px",
     boxSizing: "border-box",
     fontFamily:
       '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif',
     color: "#241f1c",
+    padding: "clamp(12px, 3vw, 32px)",
   },
+
   shell: {
+    width: "100%",
     maxWidth: 920,
     margin: "0 auto",
-    minHeight: "calc(100vh - 64px)",
+    minHeight: "calc(100dvh - 24px)",
     display: "flex",
     flexDirection: "column",
-    gap: 18,
+    gap: "clamp(12px, 2vw, 18px)",
   },
+
   header: {
     background: "rgba(255,255,255,0.72)",
     border: "1px solid rgba(120,92,72,0.12)",
-    borderRadius: 28,
-    padding: "28px 30px",
+    borderRadius: "clamp(20px, 5vw, 28px)",
+    padding: "clamp(20px, 6vw, 30px)",
     boxShadow: "0 18px 60px rgba(70, 46, 30, 0.08)",
     backdropFilter: "blur(14px)",
   },
+
   badge: {
     display: "inline-block",
-    padding: "6px 12px",
+    padding: "5px 11px",
     borderRadius: 999,
     background: "#efe4da",
     color: "#7b5b45",
-    fontSize: 13,
+    fontSize: "clamp(11px, 3vw, 13px)",
     marginBottom: 12,
+    maxWidth: "100%",
+    whiteSpace: "nowrap",
   },
+
   title: {
     margin: 0,
-    fontSize: 42,
-    letterSpacing: "-1.2px",
-    lineHeight: 1.05,
+    fontSize: "clamp(42px, 13vw, 72px)",
+    letterSpacing: "-1.8px",
+    lineHeight: 0.96,
   },
+
   subtitle: {
-    margin: "14px 0 0",
+    margin: "clamp(14px, 4vw, 18px) 0 0",
     color: "#756960",
-    fontSize: 16,
-    lineHeight: 1.7,
+    fontSize: "clamp(16px, 4.5vw, 22px)",
+    lineHeight: 1.65,
+    maxWidth: 680,
   },
+
   chatPanel: {
     flex: 1,
+    minHeight: "clamp(320px, 52dvh, 560px)",
     background: "rgba(255,255,255,0.78)",
     border: "1px solid rgba(120,92,72,0.12)",
-    borderRadius: 28,
-    padding: 22,
+    borderRadius: "clamp(22px, 6vw, 28px)",
+    padding: "clamp(16px, 4vw, 22px)",
     boxShadow: "0 18px 60px rgba(70, 46, 30, 0.08)",
-    overflow: "auto",
+    overflowY: "auto",
   },
+
   empty: {
-    minHeight: 360,
+    minHeight: "clamp(300px, 48dvh, 440px)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     textAlign: "center",
     color: "#6f6259",
-    padding: 24,
+    padding: "clamp(18px, 5vw, 30px)",
   },
+
   emptyIcon: {
-    fontSize: 42,
+    fontSize: "clamp(34px, 10vw, 48px)",
     marginBottom: 14,
   },
+
   emptyTitle: {
     margin: 0,
-    fontSize: 24,
+    fontSize: "clamp(24px, 7vw, 36px)",
+    lineHeight: 1.25,
     color: "#2c2520",
   },
+
   emptyText: {
-    maxWidth: 520,
-    margin: "14px auto 0",
-    lineHeight: 1.8,
-    fontSize: 16,
+    maxWidth: 560,
+    margin: "16px auto 0",
+    lineHeight: 1.85,
+    fontSize: "clamp(16px, 4.4vw, 22px)",
   },
+
   messages: {
     display: "flex",
     flexDirection: "column",
     gap: 14,
   },
+
   messageRow: {
     display: "flex",
     width: "100%",
   },
+
   bubble: {
-    maxWidth: "78%",
+    maxWidth: "min(82%, 720px)",
     borderRadius: 22,
     padding: "14px 16px",
     lineHeight: 1.75,
-    fontSize: 15.5,
+    fontSize: "clamp(15px, 4vw, 16px)",
     whiteSpace: "pre-wrap",
+    wordBreak: "break-word",
+    overflowWrap: "anywhere",
     boxShadow: "0 8px 28px rgba(40, 28, 20, 0.06)",
   },
+
   userBubble: {
     background: "#2c2520",
     color: "#fff",
     borderTopRightRadius: 8,
   },
+
   aiBubble: {
     background: "#fffaf5",
     color: "#2d2824",
     border: "1px solid rgba(120,92,72,0.12)",
     borderTopLeftRadius: 8,
   },
+
   insightBubble: {
     background: "linear-gradient(135deg, #f5eadc 0%, #fff7ef 100%)",
     border: "1px solid rgba(134, 98, 63, 0.24)",
-    maxWidth: "88%",
+    maxWidth: "min(92%, 760px)",
   },
+
   insightTitle: {
-    fontSize: 17,
+    fontSize: "clamp(16px, 4.5vw, 18px)",
     fontWeight: 800,
     marginBottom: 10,
     color: "#5d4535",
   },
+
   messageLabel: {
     fontSize: 12,
     opacity: 0.62,
     marginBottom: 6,
     fontWeight: 700,
   },
+
   messageText: {
-    fontSize: 15.5,
+    fontSize: "clamp(15px, 4vw, 16px)",
   },
+
   footer: {
-    background: "rgba(255,255,255,0.82)",
+    position: "sticky",
+    bottom: 0,
+    background: "rgba(255,255,255,0.9)",
     border: "1px solid rgba(120,92,72,0.12)",
-    borderRadius: 28,
-    padding: 16,
-    boxShadow: "0 18px 60px rgba(70, 46, 30, 0.08)",
+    borderRadius: "clamp(22px, 6vw, 28px)",
+    padding: "clamp(12px, 3vw, 16px)",
+    boxShadow: "0 18px 60px rgba(70, 46, 30, 0.1)",
     display: "flex",
-    gap: 12,
-    alignItems: "flex-end",
+    gap: 10,
+    alignItems: "stretch",
+    backdropFilter: "blur(14px)",
   },
+
   input: {
     flex: 1,
+    minWidth: 0,
     resize: "none",
     border: "1px solid rgba(120,92,72,0.18)",
     borderRadius: 18,
-    padding: "13px 15px",
-    fontSize: 15,
-    lineHeight: 1.6,
+    padding: "12px 14px",
+    fontSize: "clamp(15px, 4vw, 16px)",
+    lineHeight: 1.55,
     outline: "none",
     background: "#fffaf7",
     color: "#2c2520",
+    minHeight: 52,
+    maxHeight: 116,
   },
+
   actions: {
     display: "flex",
-    gap: 10,
+    gap: 8,
+    flexShrink: 0,
   },
+
   primaryButton: {
     border: "none",
     borderRadius: 16,
-    padding: "13px 18px",
+    padding: "0 18px",
+    minHeight: 52,
     background: "#2c2520",
     color: "#fff",
-    fontSize: 15,
+    fontSize: "clamp(14px, 3.8vw, 15px)",
     cursor: "pointer",
     whiteSpace: "nowrap",
   },
+
   secondaryButton: {
     border: "1px solid rgba(120,92,72,0.18)",
     borderRadius: 16,
-    padding: "13px 16px",
+    padding: "0 15px",
+    minHeight: 52,
     background: "#fff6ee",
     color: "#5b4637",
-    fontSize: 15,
+    fontSize: "clamp(14px, 3.8vw, 15px)",
     cursor: "pointer",
     whiteSpace: "nowrap",
   },
