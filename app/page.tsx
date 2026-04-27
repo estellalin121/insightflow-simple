@@ -134,7 +134,11 @@ export default function Page() {
                       }}
                     >
                       <div style={styles.messageLabel}>
-                        {isUser ? "我" : isInsight ? "Insight 小结" : "InsightFlow"}
+                        {isUser
+                          ? "我"
+                          : isInsight
+                          ? "Insight 小结"
+                          : "InsightFlow"}
                       </div>
 
                       {isInsight ? (
@@ -155,7 +159,9 @@ export default function Page() {
               })}
 
               {loading && (
-                <div style={{ ...styles.messageRow, justifyContent: "flex-start" }}>
+                <div
+                  style={{ ...styles.messageRow, justifyContent: "flex-start" }}
+                >
                   <div style={{ ...styles.bubble, ...styles.aiBubble }}>
                     <div style={styles.messageLabel}>InsightFlow</div>
                     <div style={styles.messageText}>正在想一想...</div>
@@ -167,31 +173,20 @@ export default function Page() {
         </section>
 
         <footer style={styles.footer}>
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="说说你喜欢的作品、角色，或一个让你在意的情节..."
-            style={styles.input}
-            rows={2}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-              }
-            }}
-          />
-
-          <div style={styles.actions}>
-            <button
-              onClick={generateInsight}
-              disabled={loading || messages.length === 0}
-              style={{
-                ...styles.secondaryButton,
-                opacity: loading || messages.length === 0 ? 0.45 : 1,
+          <div style={styles.inputRow}>
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="说说你喜欢的作品、角色，或一个让你在意的情节..."
+              style={styles.input}
+              rows={2}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage();
+                }
               }}
-            >
-              🧠 总结
-            </button>
+            />
 
             <button
               onClick={sendMessage}
@@ -204,6 +199,17 @@ export default function Page() {
               {loading ? "发送中" : "发送"}
             </button>
           </div>
+
+          <button
+            onClick={generateInsight}
+            disabled={loading || messages.length === 0}
+            style={{
+              ...styles.summaryButton,
+              opacity: loading || messages.length === 0 ? 0.45 : 1,
+            }}
+          >
+            🧠 总结一下
+          </button>
         </footer>
       </section>
     </main>
@@ -249,7 +255,6 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#7b5b45",
     fontSize: "clamp(11px, 3vw, 13px)",
     marginBottom: 12,
-    maxWidth: "100%",
     whiteSpace: "nowrap",
   },
 
@@ -378,9 +383,15 @@ const styles: Record<string, React.CSSProperties> = {
     padding: "clamp(12px, 3vw, 16px)",
     boxShadow: "0 18px 60px rgba(70, 46, 30, 0.1)",
     display: "flex",
-    gap: 10,
-    alignItems: "stretch",
+    flexDirection: "column",
+    gap: 8,
     backdropFilter: "blur(14px)",
+  },
+
+  inputRow: {
+    display: "flex",
+    gap: 8,
+    alignItems: "stretch",
   },
 
   input: {
@@ -399,12 +410,6 @@ const styles: Record<string, React.CSSProperties> = {
     maxHeight: 116,
   },
 
-  actions: {
-    display: "flex",
-    gap: 8,
-    flexShrink: 0,
-  },
-
   primaryButton: {
     border: "none",
     borderRadius: 16,
@@ -417,15 +422,14 @@ const styles: Record<string, React.CSSProperties> = {
     whiteSpace: "nowrap",
   },
 
-  secondaryButton: {
+  summaryButton: {
+    width: "100%",
     border: "1px solid rgba(120,92,72,0.18)",
     borderRadius: 16,
-    padding: "0 15px",
-    minHeight: 52,
+    height: 48,
     background: "#fff6ee",
     color: "#5b4637",
-    fontSize: "clamp(14px, 3.8vw, 15px)",
+    fontSize: 15,
     cursor: "pointer",
-    whiteSpace: "nowrap",
   },
 };
